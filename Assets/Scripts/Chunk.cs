@@ -8,7 +8,8 @@ public class Chunk
     public Material cubeMaterial;
     public Block[,,] chunkData;
     public GameObject chunk;
-
+    public enum ChunkStatus {DRAW, DONE, KEEP}
+    public ChunkStatus status;
     void BuildChunk()
     {
         chunkData = new Block[World.chunkSize, World.chunkSize, World.chunkSize];
@@ -20,8 +21,13 @@ public class Chunk
                     int worldX = (int)(x + chunk.transform.position.x);
                     int worldY = (int)(y + chunk.transform.position.y);
                     int worldZ = (int)(z + chunk.transform.position.z);
+                    //THE VOID
+                    if(worldY < 0)
+                    {
+                        //DO NOTHING
+                    }
                     //BEDROCK SPAWNING
-                    if(worldY == 0)
+                    else if(worldY == 0)
                     {
                         chunkData[x, y, z] = new Block(Block.BlockType.BEDROCK, pos,
                                        chunk.gameObject, cubeMaterial, this);
@@ -36,6 +42,7 @@ public class Chunk
                     else if (worldY <= Utils.GenerateStoneHeight(worldX, worldZ))
                     {
                         int diamondChance = 1;
+
                         if (worldY > 11)
                             diamondChance = -(11 - worldY);
                         else if (worldY < 11)
@@ -53,7 +60,6 @@ public class Chunk
                         {
                             chunkData[x, y, z] = new Block(Block.BlockType.REDSTONE, pos,
                             chunk.gameObject, cubeMaterial, this);
-                            Debug.Log("REDSTONE SPAWNED");
                         }
                         //STONE SPAWNING
                         else
@@ -70,6 +76,7 @@ public class Chunk
                     else
                         chunkData[x, y, z] = new Block(Block.BlockType.AIR, pos,
                                         chunk.gameObject, cubeMaterial, this);
+                    status = ChunkStatus.DRAW;
                 }
 
     }
